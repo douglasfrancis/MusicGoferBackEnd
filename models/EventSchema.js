@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const eventSchema = new Schema({
     title:  String, 
-    artist: String,
+    artists: Array,
     venueName: String,
     venueId: String,
     date: Date,

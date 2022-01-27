@@ -1,5 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose');
+
+
 var cors = require('cors')
 const app = express()
 const port = 4000
@@ -12,6 +14,7 @@ app.use(cors())
 app.use(bodyParser.json())
 
 const main = require('./Nodemailer')
+const terms = require('./Nodemailer/TandcsEmail')
 
 
 const Artists = require('./models/ArtistSchema')
@@ -45,6 +48,11 @@ app.get('/get-events', async (req, res)=>{
     const list = await Events.find();
     res.send(list)
 })
+app.post('/get-events-by-id', async (req, res)=>{
+    const {artistId} = req.body
+    const events = await Events.find({artistId:artistId}).exec();
+    res.send(events)
+})
 
 app.post('/get-events-by-date-range', async (req, res)=>{
     let {dateFrom, dateTo} = req.body;
@@ -57,6 +65,22 @@ app.post('/get-events-by-date-range', async (req, res)=>{
 app.get('/get-artists', async(req,res) =>{
     const list = await Artists.find();
     res.send(list)
+})
+
+app.post('/get-artists-by-category', async(req,res) =>{
+    const artists = await Artists.find({'category': req.body.category}).exec();
+    res.send(artists)
+})
+
+app.post('/get-artist-by-id', async(req,res) =>{
+    Artists.findById(req.body._id, function (err, artist) {
+        if(err){
+            console.log(err)
+        } else {
+            res.send(artist)
+        }
+    });
+    
 })
 
 app.post('/update-artist', async(req,res) =>{
@@ -88,6 +112,7 @@ app.post('/get-venue-by-id', async(req,res) =>{
     
 })
 
+
 app.post('/add-venue', async (req, res) => {
     const venue = new Venues(req.body)
     
@@ -101,6 +126,18 @@ app.post('/new-event', async (req, res) => {
     const booking = (req.body)
     try{
         await main(booking)
+        res.json({success: true, msg: "Email successfuly sent"})
+    } catch(e){
+        console.log(e)
+        res.json({success: false, msg: "Error sending email"})
+    }
+   
+})
+
+app.post('/send-terms', async (req, res) => {
+    const venue = (req.body)
+    try{
+        await terms()
         res.json({success: true, msg: "Email successfuly sent"})
     } catch(e){
         console.log(e)

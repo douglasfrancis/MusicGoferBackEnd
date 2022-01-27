@@ -5,6 +5,7 @@ const artistSchema = new Schema({
     _id: String,
     img: String,
     name:  String, 
+    category: String,
     number: String,
     email: String,
     youtube: String,

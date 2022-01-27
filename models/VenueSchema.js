@@ -5,6 +5,7 @@ const venueSchema = new Schema({
     name:  String, 
     address: String,
     setTimes: Array,
+    startTime: String,
     artistFee: Number,
     venueFee: Number,
     equipment: String,
